@@ -1,2 +1,4 @@
-# MicroBenchmark
-Microbenchmark facility for C++. Very simple to use, single header only, with sound statistics.
+# Bench
+Benchmark facility for C++. Very simple to use, single header only, with sound statistics.
+
+
