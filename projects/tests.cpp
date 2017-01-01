@@ -17,13 +17,13 @@ TEST_CASE("Simple Benchmark API Example", "[vector]") {
 }
 
 TEST_CASE("Compare two benchmark results") {
-    Bench benchA(1, 7);
+    Bench benchA("vector<int>", 1, 7);
     while (benchA) {
         std::vector<int> v;
         v.push_back(123);
     }
 
-    Bench benchB(1, 5);
+    Bench benchB("vector<bool>", 1, 5);
     while (benchB) {
         std::vector<bool> v;
         v.push_back(false);

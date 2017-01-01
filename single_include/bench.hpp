@@ -10,13 +10,15 @@
 #include <iostream>
 #include <sstream>
 
+class Bench;
+std::ostream& operator<<(std::ostream& os, const Bench& bench);
 
 // Benchmark.
-// 
 class Bench {
 private:
     typedef std::chrono::high_resolution_clock clock;
 
+    std::string mName;
     size_t mItersLeft;
     size_t mNumIters;
     std::chrono::time_point<clock> mStartTime;
@@ -148,6 +150,8 @@ public:
     // see https://de.wikipedia.org/wiki/Wilcoxon-Mann-Whitney-Test
     static std::string compare(const Bench& b1, const Bench& b2) {
         std::stringstream ss;
+        ss << b1 << std::endl
+            << b2 << std::endl;
         if (isRejectingH0(b1.measurements(), b2.measurements())) {
             ss << "REJECTING Hypotesis 0, so medians are with 95% certainty NOT equal";
         } else {
@@ -156,8 +160,9 @@ public:
         return ss.str();
     }
 
-    Bench(double maxTotalMeasuredSeconds = 1, size_t maxNumMeasurements = 10, size_t measurementCertaintyFactor = 1000)
-        : mItersLeft(0)
+    Bench(const char* name = "", double maxTotalMeasuredSeconds = 1, size_t maxNumMeasurements = 10, size_t measurementCertaintyFactor = 1000)
+        : mName(name)
+        , mItersLeft(0)
         , mNumIters(0)
         , mUnitPerIteration(1.0)
         , mUnitName("iteration") {
@@ -270,6 +275,9 @@ public:
         metricPrefix(v, prefix, factor, power);
 
         os << (v * factor) << " " << prefix << "s/" << mUnitName << " (1e" << power << ")";
+        if (!mName.empty()) {
+            os << " for " << mName;
+        }
     }
 
 private:
