@@ -2,3 +2,5 @@
 *.suo
 Debug
 Release
+/projects/VS2015/Tests/Tests.VC.db
+/projects/VS2015/Tests/Tests.VC.VC.opendb

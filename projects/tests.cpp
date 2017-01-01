@@ -50,7 +50,6 @@ TEST_CASE("multiple arguments") {
         delete[] dst;
 
         bench.unitsOfMeasurement("byte", i);
-
         std::cout << bench << std::endl;
     }
 }

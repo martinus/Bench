@@ -241,50 +241,35 @@ public:
         return *this;
     }
 
-    static void prefix(const double value, std::string& prefix, double& factor) {
-        if (value < 1e-15) {
-            factor = 1e18;
-            prefix = "a";
-        } else if (value < 1e-12) {
-            factor = 1e15;
-            prefix = "f";
-        } else if (value < 1e-9) {
-            factor = 1e12;
-            prefix = "p";
-        } else if (value < 1e-6) {
-            factor = 1e9;
-            prefix = "n";
-        } else if (value < 1e-3) {
-            factor = 1e6;
-            prefix = "u";
-        } else if (value < 1) {
-            factor = 1e3;
-            prefix = "m";
-        } else if (value < 1e3) {
-            factor = 1;
-            prefix = "";
-        } else if (value < 1e6) {
-            factor = 1e-3;
-            prefix = "k";
-        } else if (value < 1e9) {
-            factor = 1e-6;
-            prefix = "M";
-        } else if (value < 1e12) {
-            factor = 1e-9;
-            prefix = "G";
-        } else if (value < 1e15) {
-            factor = 1e-12;
-            prefix = "T";
-        } else if (value < 1e18) {
-            factor = 1e-15;
-            prefix = "P";
-        } else {
-            factor = 1e-18;
-            prefix = "E";
+    // Finds a reasonable prefix and factor for the given value.
+    static void metricPrefix(const double v, std::string& prefix, double& factor, int& power) {
+        // see https://de.wikipedia.org/wiki/Vors%C3%A4tze_f%C3%BCr_Ma%C3%9Feinheiten
+        static const char* symbol[] = { "Y", "Z", "E", "P", "T", "G", "M", "k", "", "m", "u", "n", "p", "f", "a", "z", "y" };
+        static const int highestPower = 24;
+        const int numSymbols = sizeof(symbol) / sizeof(*symbol);
+        for (int i = 0; i < numSymbols; ++i) {
+            power = highestPower - i * 3;
+            if (v > std::pow(10, power)) {
+                prefix = symbol[i];
+                factor = std::pow(10, -power);
+                return;
+            }
+        }
+
+        // all else failed!
+        prefix = "";
+        factor = 1.0;
+        power = 1;
     }
 
     void print(std::ostream& os) const {
-        os << (min() / mUnitPerIteration) << " sec per " << mUnitName;
+        double v = min() / mUnitPerIteration;
+        std::string prefix;
+        double factor;
+        int power;
+        metricPrefix(v, prefix, factor, power);
+
+        os << (v * factor) << " " << prefix << "s/" << mUnitName << " (1e" << power << ")";
     }
 
 private:
